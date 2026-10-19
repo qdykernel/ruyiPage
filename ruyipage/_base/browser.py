@@ -294,7 +294,6 @@ def create_browser_from_probe_info(info):
     browser._quit_lock = threading.Lock()
     browser._proxy_auth_intercept_id = None
     browser._proxy_auth_subscription_id = None
-    browser._xpath_picker_last_reinject = {}
     browser._baseline_preload_script_id = None
     browser._baseline_preload_session_id = None
     browser._baseline_preload_lock = threading.Lock()
@@ -717,7 +716,6 @@ class Firefox(object):
             self._quit_lock = threading.Lock()
             self._proxy_auth_intercept_id = None
             self._proxy_auth_subscription_id = None
-            self._xpath_picker_last_reinject = {}
             self._baseline_preload_script_id = None
             self._baseline_preload_session_id = None
             self._baseline_preload_lock = threading.Lock()
@@ -2346,11 +2344,14 @@ class Firefox(object):
 
     def _on_context_created(self, params):
         """处理新 context 创建事件"""
+        if params.get("parent") is not None:
+            return
         ctx_id = params.get("context", "")
         with self._context_ids_lock:
             if ctx_id and ctx_id not in self._context_ids:
                 self._context_ids.append(ctx_id)
                 logger.debug("新标签页: %s", ctx_id)
+        self._on_navigation_event(params)
 
     def _on_context_destroyed(self, params):
         """处理 context 销毁事件"""
@@ -2359,29 +2360,29 @@ class Firefox(object):
             if ctx_id in self._context_ids:
                 self._context_ids.remove(ctx_id)
                 self._contexts.pop(ctx_id, None)
-                self._xpath_picker_last_reinject.pop(ctx_id, None)
                 with self._context_nav_locks_lock:
                     self._context_nav_locks.pop(ctx_id, None)
             logger.debug("标签页关闭: %s", ctx_id)
 
     def _on_navigation_event(self, params):
         """处理导航相关事件，自动收敛 XPath picker 注入。"""
-        if not getattr(self._options, "xpath_picker_enabled", False):
+        if not getattr(getattr(self, "_options", None), "xpath_picker_enabled", False):
             return
 
         ctx_id = params.get("context", "")
         if not ctx_id:
             return
 
-        now = time.time()
-        last = self._xpath_picker_last_reinject.get(ctx_id, 0)
-        if now - last < 0.8:
-            return
-        self._xpath_picker_last_reinject[ctx_id] = now
-
         try:
-            tab = self._get_or_create_tab(ctx_id)
-            tab._reinject_xpath_picker_if_needed()
+            # A browser-created tab may not have a Python controller yet. Keep
+            # this callback independent of tab construction and its injections.
+            from .._pages.firefox_base import FirefoxBase
+
+            page = FirefoxBase()
+            page._browser = self
+            page._context_id = ctx_id
+            page._driver = ContextDriver(self._driver, ctx_id)
+            page._reinject_xpath_picker_if_needed()
         except Exception as e:
             logger.debug("导航事件 XPath picker reinject 失败: %s", e)
 

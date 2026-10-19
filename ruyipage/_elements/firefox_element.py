@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 from .._base.base import BaseElement
 from .._functions.bidi_values import JS_FAILED, parse_value, make_shared_ref
+from .._functions.element_snapshot import ELEMENT_ATTRIBUTE_JS, ELEMENT_SNAPSHOT_JS
 from .._functions.keys import Keys
 from .._functions.sleep import sleep as _sleep
 from .._bidi import script as bidi_script
@@ -201,12 +202,8 @@ class FirefoxElement(BaseElement):
 
     @property
     def link(self) -> str:
-        """链接地址（href 属性）"""
-        href = self.attr("href")
-        if href:
-            # 转换为绝对 URL
-            return self._run_safe("(el) => el.href") or href
-        return ""
+        """链接地址（href 属性，按元素所在文档的 baseURI 补全）。"""
+        return self.attr("href") or ""
 
     @property
     def src(self) -> str:
@@ -432,12 +429,14 @@ class FirefoxElement(BaseElement):
 
         Returns:
             str: 属性值字符串，不存在时通常返回空字符串或 ``None``。
+                ``href`` 按元素所在文档的 baseURI 补全为绝对 URL；
+                原始属性文本可通过 ``attrs.get('href')`` 读取。
 
         适用场景：
             - 读取链接地址，例如 ``title_ele.attr('href')``
             - 读取图片地址、输入框占位符等属性
         """
-        return self._run_safe("(el, name) => el.getAttribute(name)", name)
+        return self._run_safe(ELEMENT_ATTRIBUTE_JS, name)
 
     def property(self, name):
         """获取 JS 属性值
@@ -1225,11 +1224,12 @@ class FirefoxElement(BaseElement):
             快照在抓取那一刻就和页面脱钩了，之后页面 DOM 的变化不会反映到
             StaticElement 上，它也不能点击和输入。需要交互请用 ``ele()``。
         """
-        from .static_element import make_static_ele
+        from .static_element import _make_static_ele_from_snapshot
 
         # 取 outerHTML 而不是 innerHTML：这样快照的根节点就是当前元素本身，
         # 在查找结果上调 parent() 可以一路回溯到它，不会凭空断在半路。
-        root = make_static_ele(self.html)
+        snapshot = self._run_safe(ELEMENT_SNAPSHOT_JS) or {}
+        root = _make_static_ele_from_snapshot(snapshot)
         if locator is None:
             return root
         return root.ele(locator, index=index)
@@ -1246,9 +1246,10 @@ class FirefoxElement(BaseElement):
         适用场景：
             - 一次抓下整个列表容器，再在本地遍历每一行，省掉逐行查询的往返
         """
-        from .static_element import make_static_ele
+        from .static_element import _make_static_ele_from_snapshot
 
-        return make_static_ele(self.html).eles(locator)
+        snapshot = self._run_safe(ELEMENT_SNAPSHOT_JS) or {}
+        return _make_static_ele_from_snapshot(snapshot).eles(locator)
 
     # ===== 元素刷新 =====
 

@@ -396,6 +396,7 @@ page.get("https://www.example.com")
 
 启用后，页面右下角会出现一个半透明磨砂玻璃浮窗：
 
+- 同一浏览器中已打开的普通网页和后续新建的标签页都会启用；刷新、修改网址或页面跳转后会自动恢复
 - 点击页面元素时，会锁定当前结果
 - 浮窗会显示元素名字、文本、XPath 绝对路径、XPath 相对路径、元素中心 `(x, y)`
 - 内置 `ruyiPage代码生成` 选项卡，会自动生成对应元素获取代码
@@ -1068,6 +1069,8 @@ title = page.ele("css:h1").text
 url = page.ele("css:a").attr("href")
 src = page.ele("css:img").attr("src")
 ```
+
+`ele.link` 和 `ele.attr("href")` 会按元素所在文档的地址自动补全链接，支持页面的 `<base href>` 和 iframe。例如在 `https://www.douyin.com/user/...` 中，`/video/123` 会返回 `https://www.douyin.com/video/123`，`//www.douyin.com/note/456` 会返回 `https://www.douyin.com/note/456`。`s_ele()` / `s_eles()` 获取的静态快照会保存抓取时浏览器解析好的链接，关闭浏览器后也能继续读取；读取原始属性文本可用 `ele.attrs.get("href")`。
 
 常见属性：
 

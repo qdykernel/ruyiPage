@@ -383,6 +383,7 @@ page.get("https://www.example.com")
 
 When enabled, a translucent frosted-glass panel appears in the bottom-right corner:
 
+- existing web pages and new tabs in the same browser receive the picker; it restores automatically after reloads, address changes, and navigation
 - clicking an element locks the current result
 - the panel shows element name, text, absolute XPath, relative XPath, and center `(x, y)`
 - a built-in `ruyiPage code generation` tab generates ready-to-use locator code
@@ -1035,6 +1036,8 @@ desc = card.ele("css:.desc")
 | `ele.click_self()` | Click the element itself | `self` |
 | `ele.input(text)` | Type into an input | `self` |
 | `ele.clear()` | Clear input content | `self` |
+
+`ele.link` and `ele.attr("href")` resolve relative links against the element's document URL, including `<base href>` and iframe documents. On `https://www.douyin.com/user/...`, `/video/123` becomes `https://www.douyin.com/video/123`, and `//www.douyin.com/note/456` becomes `https://www.douyin.com/note/456`. Static snapshots from `s_ele()` / `s_eles()` preserve the browser's resolved links at capture time, so they remain readable after the browser closes. Use `ele.attrs.get("href")` to read the original attribute text.
 
 #### `ele.click_self()`
 

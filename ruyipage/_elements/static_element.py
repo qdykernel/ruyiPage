@@ -21,6 +21,7 @@
 
 import re
 from functools import lru_cache
+from urllib.parse import urljoin
 
 from ..errors import LocatorError
 from .._functions.locator import parse_locator
@@ -259,13 +260,14 @@ class StaticElement(object):
     _type = 'StaticElement'
 
     def __init__(self, tag=None, attrs=None, text=None, inner_html=None,
-                 outer_html=None, node=None):
+                 outer_html=None, node=None, base_url=None):
         """
         Args:
             node: 对应的 lxml 元素。有它才能继续 ele() / parent() 等导航，
                 各属性也改为按需从树上取，不必在构造时全算一遍。
             tag / attrs / text / inner_html / outer_html:
                 不带 node 构造时的静态取值，保留给老调用方。
+            base_url: 快照所属文档的 baseURI，用于补全 href。
         """
         self._node = node
         self._tag = tag
@@ -273,6 +275,8 @@ class StaticElement(object):
         self._text = text
         self._inner_html = inner_html
         self._outer_html = outer_html
+        self._base_url = base_url
+        self._resolved_hrefs = {}
 
     # ===== 基本属性 =====
     # 带 node 时一律惰性求值：eles() 可能一次返回上千个元素，
@@ -327,7 +331,7 @@ class StaticElement(object):
 
     @property
     def link(self) -> str:
-        """``href`` 属性。"""
+        """``href`` 属性；携带文档 baseURI 时返回完整地址。"""
         return self.attr('href') or ''
 
     @property
@@ -341,12 +345,32 @@ class StaticElement(object):
         return self.attr('value') or ''
 
     def attr(self, name):
-        """取单个属性值，没有该属性返回 None。"""
+        """取属性值；href 按快照 baseURI 补全，原值保留在 attrs 中。"""
+        if name == 'href' and self._node in self._resolved_hrefs:
+            return self._resolved_hrefs[self._node]
         if self._attrs is not None:
-            return self._attrs.get(name)
-        if self._node is None:
+            value = self._attrs.get(name)
+        elif self._node is None:
             return None
-        return self._node.get(name)
+        else:
+            value = self._node.get(name)
+        if name == 'href' and value and self._base_url:
+            try:
+                resolved = urljoin(self._base_url, value)
+                # urljoin drops explicit empty query/fragment delimiters.
+                # An empty query must clear the base URL's query parameters.
+                path_query, has_fragment, fragment = value.partition('#')
+                _, has_query, query = path_query.partition('?')
+                if has_query and not query:
+                    resolved = resolved.split('#', 1)[0].split('?', 1)[0] + '?'
+                    if has_fragment:
+                        resolved += '#' + fragment
+                elif has_fragment and not fragment and not resolved.endswith('#'):
+                    resolved += '#'
+                return resolved
+            except ValueError:
+                pass
+        return value
 
     def _serialize_outer(self):
         """序列化 outerHTML。"""
@@ -376,7 +400,11 @@ class StaticElement(object):
 
     def _wrap(self, node):
         """把 lxml 节点包成 StaticElement，None 则返回 NoneElement。"""
-        return StaticElement(node=node) if node is not None else _none()
+        if node is None:
+            return _none()
+        element = StaticElement(node=node, base_url=self._base_url)
+        element._resolved_hrefs = self._resolved_hrefs
+        return element
 
     # ===== 相对查找 =====
 
@@ -550,7 +578,49 @@ class StaticElement(object):
 
 # ──────────────────────────── 工厂函数 ────────────────────────────
 
-def make_static_ele(html, locator=None, index=1):
+def _parse_static_snapshot(snapshot):
+    """Restore browser-resolved links without exposing capture markers."""
+    html = snapshot.get('html', '')
+    doc = _parse_document(html)
+    if doc is None:
+        return None, None
+    root = None
+    resolved_hrefs = {}
+    marker = snapshot.get('marker')
+    hrefs = snapshot.get('hrefs', {})
+    if marker:
+        for node in doc.iter():
+            if not _is_element(node):
+                continue
+            key = node.attrib.pop(marker, None)
+            if key == '0':
+                root = node
+            if key in hrefs:
+                resolved_hrefs[node] = hrefs[key]
+    if root is None:
+        root = _fragment_root(doc, html)
+    element = StaticElement(node=root, base_url=snapshot.get('baseURL'))
+    element._resolved_hrefs = resolved_hrefs
+    return doc, element
+
+
+def _make_static_ele_from_snapshot(snapshot, locator=None, index=1):
+    doc, root = _parse_static_snapshot(snapshot)
+    if root is None:
+        return _none()
+    if locator is None:
+        return root
+    return root._wrap(_pick(_find_nodes(doc, locator, False), index))
+
+
+def _make_static_eles_from_snapshot(snapshot, locator):
+    doc, root = _parse_static_snapshot(snapshot)
+    if root is None:
+        return []
+    return [root._wrap(node) for node in _find_nodes(doc, locator, False)]
+
+
+def make_static_ele(html, locator=None, index=1, base_url=None):
     """从 HTML 字符串解析出单个静态元素。
 
     Args:
@@ -558,6 +628,7 @@ def make_static_ele(html, locator=None, index=1):
         locator: 定位器。为 None 时返回这段 HTML 的根元素
             （片段会自动剥掉 lxml 补出来的 ``<html>/<body>``）。
         index: 第几个匹配结果，从 1 开始，负数从后往前数。
+        base_url: 文档的 baseURI；省略时保留原始相对 href。
 
     Returns:
         StaticElement 或 NoneElement。
@@ -568,18 +639,21 @@ def make_static_ele(html, locator=None, index=1):
 
     if locator is None:
         root = _fragment_root(doc, html)
-        return StaticElement(node=root) if root is not None else _none()
+        return (StaticElement(node=root, base_url=base_url)
+                if root is not None else _none())
 
     node = _pick(_find_nodes(doc, locator, False), index)
-    return StaticElement(node=node) if node is not None else _none()
+    return (StaticElement(node=node, base_url=base_url)
+            if node is not None else _none())
 
 
-def make_static_eles(html, locator):
+def make_static_eles(html, locator, base_url=None):
     """从 HTML 字符串解析出所有匹配的静态元素。
 
     Args:
         html: HTML 字符串。
         locator: 定位器。
+        base_url: 文档的 baseURI；省略时保留原始相对 href。
 
     Returns:
         list[StaticElement]: 按文档序排列，没找到返回空列表。
@@ -587,4 +661,5 @@ def make_static_eles(html, locator):
     doc = _parse_document(html)
     if doc is None:
         return []
-    return [StaticElement(node=n) for n in _find_nodes(doc, locator, False)]
+    return [StaticElement(node=n, base_url=base_url)
+            for n in _find_nodes(doc, locator, False)]

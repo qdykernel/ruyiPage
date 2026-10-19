@@ -17,6 +17,7 @@ from .._base.driver import ContextDriver
 from .._bidi import browsing_context as bidi_context
 from .._bidi import script as bidi_script
 from .._functions.bidi_values import parse_value, make_shared_ref
+from .._functions.element_snapshot import PAGE_SNAPSHOT_JS
 from .._functions.locator import parse_locator
 
 # ``function foo(...)`` opens a statement; ``function (...)`` and
@@ -185,9 +186,13 @@ class FirefoxBase(BasePage):
         if not options or not getattr(options, "xpath_picker_enabled", False):
             return
 
+        registered = False
+        session_id = getattr(self._browser, "_session_id", None)
         try:
-            if not getattr(
-                self._browser, "_xpath_picker_global_preload_script_id", None
+            if (
+                not getattr(self._browser, "_xpath_picker_global_preload_script_id", None)
+                or getattr(self._browser, "_xpath_picker_preload_session_id", None)
+                != session_id
             ):
                 result = bidi_script.add_preload_script(
                     self._driver._browser_driver,
@@ -196,14 +201,22 @@ class FirefoxBase(BasePage):
                 self._browser._xpath_picker_global_preload_script_id = result.get(
                     "script", ""
                 )
-            self.run_js(f"({self._get_xpath_picker_script()})()", as_expr=True)
-            self.run_js(
-                self._get_xpath_picker_frame_bridge_script(),
-                self._get_xpath_picker_script(),
-                as_expr=False,
-            )
+                self._browser._xpath_picker_preload_session_id = session_id
+                registered = bool(result.get("script"))
         except Exception as e:
-            logger.debug("XPath picker 注入失败: %s", e)
+            logger.debug("XPath picker 预加载注册失败: %s", e)
+
+        self._reinject_xpath_picker_if_needed()
+        if registered:
+            # Preload scripts only affect future documents; install the picker
+            # in tabs that were already open when it was enabled as well.
+            try:
+                tree = bidi_context.get_tree(self._driver._browser_driver, max_depth=0)
+                for context in tree.get("contexts", []):
+                    if context.get("context") != self._context_id:
+                        self._browser._on_navigation_event(context)
+            except Exception as e:
+                logger.debug("XPath picker 已有页面注入失败: %s", e)
 
     def _reinject_xpath_picker_if_needed(self):
         """在导航完成后的当前页面重新显式注入 picker。"""
@@ -3339,7 +3352,7 @@ class FirefoxBase(BasePage):
                 restoreUI();
             }
         });
-        observer.observe(document.documentElement || document, {
+        observer.observe(document, {
             childList: true,
             subtree: true,
         });
@@ -3357,6 +3370,17 @@ class FirefoxBase(BasePage):
     }
 
     function init() {
+        // BiDi preload scripts run before the parser creates the root element.
+        if (!document.documentElement) {
+            if (!localState.readyListenerBound) {
+                localState.readyListenerBound = true;
+                document.addEventListener('DOMContentLoaded', () => {
+                    localState.readyListenerBound = false;
+                    init();
+                }, {once: true});
+            }
+            return;
+        }
         if (!['idle', 'locked', 'paused'].includes(state.mode)) {
             state.mode = 'idle';
         }
@@ -4134,10 +4158,10 @@ class FirefoxBase(BasePage):
         Returns:
             StaticElement 或 NoneElement
         """
-        from .._elements.static_element import make_static_ele
+        from .._elements.static_element import _make_static_ele_from_snapshot
 
-        html = self.html
-        return make_static_ele(html, locator, index=index)
+        snapshot = self.run_js(PAGE_SNAPSHOT_JS, as_expr=False)
+        return _make_static_ele_from_snapshot(snapshot, locator, index=index)
 
     def s_eles(self, locator) -> "list[StaticElement]":
         """获取所有匹配的静态元素
@@ -4148,10 +4172,10 @@ class FirefoxBase(BasePage):
         Returns:
             StaticElement 列表
         """
-        from .._elements.static_element import make_static_eles
+        from .._elements.static_element import _make_static_eles_from_snapshot
 
-        html = self.html
-        return make_static_eles(html, locator)
+        snapshot = self.run_js(PAGE_SNAPSHOT_JS, as_expr=False)
+        return _make_static_eles_from_snapshot(snapshot, locator)
 
     def _find_element(
         self, locator, index=1, timeout=None, raise_err=None, start_node=None

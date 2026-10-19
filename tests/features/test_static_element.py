@@ -249,14 +249,16 @@ def test_bad_xpath_raises():
 # ===== 元素 / 空对象上的入口 =====
 
 class _FakeElement(object):
-    """只提供 ``html`` 的假元素。
+    """提供 HTML 和 baseURI 快照的假元素。
 
-    FirefoxElement.s_ele() / s_eles() 只依赖 ``self.html``（outerHTML），
-    借此可以在不起浏览器的情况下验证它们的取根逻辑。
+    借此可以在不起浏览器的情况下验证静态快照的取根逻辑。
     """
 
     def __init__(self, html):
         self.html = html
+
+    def _run_safe(self, declaration):
+        return {'html': self.html, 'baseURL': None}
 
     s_ele = FirefoxElement.s_ele
     s_eles = FirefoxElement.s_eles
