@@ -141,7 +141,7 @@ python -c "import ruyipage; print(ruyipage.__version__)"
 python -m ruyipage install
 ```
 
-This command downloads the recommended Firefox runtime from the `ruyiPage` GitHub release and installs it into the user cache directory. Hash verification is disabled by default so the project can update release assets without requiring an immediate source-code update. After that, `launch()` will prefer this runtime by default. If you pass `browser_path` explicitly, your explicit path still wins.
+This command downloads the recommended Firefox runtime from the `ruyiPage` Gitee release and installs it into the user cache directory. Hash verification is disabled by default so the project can update release assets without requiring an immediate source-code update. After that, `launch()` will prefer this runtime by default. If you pass `browser_path` explicitly, your explicit path still wins.
 
 Common commands:
 

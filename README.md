@@ -104,7 +104,7 @@ python -c "import ruyipage; print(ruyipage.__version__)"
 python -m ruyipage install
 ```
 
-这个命令会从 `ruyiPage` 的 GitHub release 下载推荐的 Firefox runtime 并安装到用户缓存目录，默认不校验 hash，便于项目方直接更新 release 资产。后续直接调用 `launch()` 时，会优先使用这个 runtime；如果你显式传入 `browser_path`，仍然以你传入的路径为准。
+这个命令会从 `ruyiPage` 的 Gitee release 下载推荐的 Firefox runtime 并安装到用户缓存目录，默认不校验 hash，便于项目方直接更新 release 资产。后续直接调用 `launch()` 时，会优先使用这个 runtime；如果你显式传入 `browser_path`，仍然以你传入的路径为准。
 
 常用命令：
 

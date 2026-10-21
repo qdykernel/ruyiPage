@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ruyiPage"
-version = "1.2.77"
+version = "1.2.78"
 description = "专用于 AI 分析和数据采集场景，可拦截任意请求响应包的 Firefox 自动化库。"
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.9"
@@ -43,8 +43,8 @@ async = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/smith-e09046/ruyiPage"
-Repository = "https://github.com/smith-e09046/ruyiPage"
+Homepage = "https://gitee.com/losenine888/ruyiPage"
+Repository = "https://gitee.com/losenine888/ruyiPage"
 
 [tool.setuptools]
 include-package-data = true
