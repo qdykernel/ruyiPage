@@ -2305,28 +2305,3 @@ WebRTC/媒体、时区/语言、反 Hook 十类检测点，外加网络代理与
   基于 Electron + Vue3 的 Firefox 指纹浏览器图形化管理工具，无需命令行即可创建、管理和启动多个独立指纹环境。感谢 @jacklaigougou 的实现与维护：<https://github.com/jacklaigougou/ruyiBrowser-GUI>
 
 ---
-
-## 请我喝咖啡
-
-如果这个项目对你有帮助，欢迎请我喝杯咖啡，支持我继续完善 `ruyiPage`。
-
-<table>
-  <tr>
-    <td align="center">
-      <b>公众号</b><br>
-      <img src="images/gzh.jpg" width="220" alt="公众号二维码" />
-    </td>
-    <td align="center">
-      <b>QQ 社群</b><br>
-      <img src="images/qq.jpg" width="220" alt="QQ 社群二维码" />
-    </td>
-    <td align="center">
-      <b>联系我 / 个人微信</b><br>
-      <img src="images/weixin.jpg" width="220" alt="个人微信二维码" />
-    </td>
-    <td align="center">
-      <b>请我喝咖啡</b><br>
-      <img src="images/weixingoot.jpg" width="220" alt="收款码" />
-    </td>
-  </tr>
-</table>
