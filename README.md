@@ -24,8 +24,8 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/ruyiPage.svg)](https://pypi.org/project/ruyiPage/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/ruyiPage)](https://pypi.org/project/ruyiPage/)
-[![Last Commit](https://img.shields.io/github/last-commit/LoseNine/ruyipage)](https://github.com/LoseNine/ruyipage/commits/main)
-[![GitHub stars](https://img.shields.io/github/stars/LoseNine/ruyipage?style=social)](https://github.com/LoseNine/ruyipage/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/charlesval/ruyiPage)](https://github.com/charlesval/ruyiPage/commits/main)
+[![GitHub stars](https://img.shields.io/github/stars/charlesval/ruyiPage?style=social)](https://github.com/charlesval/ruyiPage/stargazers)
 [![Downloads](https://static.pepy.tech/badge/ruyipage)](https://pepy.tech/project/ruyipage)
 
 ## ❤️ 赞助商
@@ -370,7 +370,8 @@ page.quit()
 
 - `private=True` / `opts.private_mode(True)` 会为 Firefox 增加 `-private` 启动参数
 - 这和默认的临时 `profile` 不是一回事
-- 如果你只是想要一次性会话，不复用历史数据，不传 `user_dir` 也可以
+- Firefox 原生私密模式会使用独立的私密 Cookie / 存储上下文，并启用私密窗口专用的跟踪保护策略；页面可能因此表现出与普通窗口不同的第三方 Cookie、嵌入资源或登录行为
+- 如果需求只是一次性且不复用历史数据，可以使用 `private=False`（默认）并省略 `user_dir`：ruyiPage 会创建全新的普通临时 profile。它在运行期间会写入磁盘，调用 `page.quit()` 完整关闭时会尝试清理；异常终止或文件占用可能留下目录。这种方式适合与原生私密模式做对照，不保证站点放行
 - 完整示例可参考 `examples/` 目录
 
 ### 启用 XPath Picker
@@ -2221,11 +2222,11 @@ WebRTC/媒体、时区/语言、反 Hook 十类检测点，外加网络代理与
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=LoseNine%2Fruyipage&type=timeline&legend=top-left">
+<a href="https://www.star-history.com/?repos=charlesval%2FruyiPage&type=timeline&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=LoseNine/ruyipage&type=timeline&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=LoseNine/ruyipage&type=timeline&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=LoseNine/ruyipage&type=timeline&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=charlesval/ruyiPage&type=timeline&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=charlesval/ruyiPage&type=timeline&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=charlesval/ruyiPage&type=timeline&legend=top-left" />
  </picture>
 </a>
 

@@ -53,6 +53,13 @@ class BrowserManager(object):
             "userContexts", []
         )
 
+    def get_user_context(self):
+        """兼容单数写法，返回与 ``get_user_contexts()`` 相同的全部上下文列表。
+
+        这是浏览器级查询，返回值为 ``list[dict]``，与当前标签页无关。
+        """
+        return self.get_user_contexts()
+
     def remove_user_context(self, user_context):
         """删除指定 user context。
 

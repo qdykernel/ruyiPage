@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Static Firefox runtime manifest for ruyiPage managed Firefox."""
 
-RELEASE_TAG = "v1.2.69"
-FIREFOX_VERSION = "155.0"
-RELEASE_URL_TEMPLATE = "https://github.com/LoseNine/ruyipage/releases/download/{}"
+RELEASE_TAG = "v1.2.75"
+FIREFOX_VERSION = "158.0"
+RELEASE_URL_TEMPLATE = "https://github.com/charlesval/ruyiPage/releases/download/{}"
 RELEASE_BASE_URL = RELEASE_URL_TEMPLATE.format(RELEASE_TAG)
 
 RUNTIME_NAME = "firefox"
@@ -15,10 +15,10 @@ RUNTIMES = {
         "name": RUNTIME_NAME,
         "version": FIREFOX_VERSION,
         "release": RELEASE_TAG,
-        "asset": "firefox-155.0.en-US.win64-20260907.zip",
+        "asset": "firefox-158.0.en-US.win64-20261017.zip",
         "archive_type": "zip",
         "executable": "firefox/firefox.exe",
-        "install_subdir": "firefox-155.0-v1.2.69-win64",
+        "install_subdir": "firefox-158.0-v1.2.75-win64",
         "max_files": 20000,
         "max_total_size": 900 * 1024 * 1024,
     },
@@ -26,10 +26,10 @@ RUNTIMES = {
         "name": RUNTIME_NAME,
         "version": FIREFOX_VERSION,
         "release": RELEASE_TAG,
-        "asset": "firefox-155.0.en-US.linux-x86_64-20260907.tar.xz",
+        "asset": "firefox-158.0.en-US.linux-x86_64-20261017.tar.xz",
         "archive_type": "tar.xz",
         "executable": "firefox/firefox",
-        "install_subdir": "firefox-155.0-v1.2.69-linux-x86_64",
+        "install_subdir": "firefox-158.0-v1.2.75-linux-x86_64",
         "max_files": 20000,
         "max_total_size": 900 * 1024 * 1024,
     },

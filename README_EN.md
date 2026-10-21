@@ -24,8 +24,8 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/ruyiPage.svg)](https://pypi.org/project/ruyiPage/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/ruyiPage)](https://pypi.org/project/ruyiPage/)
-[![Last Commit](https://img.shields.io/github/last-commit/LoseNine/ruyipage)](https://github.com/LoseNine/ruyipage/commits/main)
-[![GitHub stars](https://img.shields.io/github/stars/LoseNine/ruyipage?style=social)](https://github.com/LoseNine/ruyipage/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/charlesval/ruyiPage)](https://github.com/charlesval/ruyiPage/commits/main)
+[![GitHub stars](https://img.shields.io/github/stars/charlesval/ruyiPage?style=social)](https://github.com/charlesval/ruyiPage/stargazers)
 [![Downloads](https://static.pepy.tech/badge/ruyipage)](https://pepy.tech/project/ruyipage)
 
 ## ❤️ Sponsors
@@ -357,7 +357,8 @@ Notes:
 
 - `private=True` / `opts.private_mode(True)` adds the `-private` startup argument for Firefox
 - This is different from the default temporary `profile`
-- If you only want a one-off session without reusing old data, you can also simply omit `user_dir`
+- Native Firefox private browsing uses separate private cookie / storage contexts and private-window tracking protection. A site may therefore observe different third-party cookie, embedded-resource, or login behavior
+- For a fresh session without reusing old data, use `private=False` (the default) and omit `user_dir`. The normal temporary profile writes to disk while running; a full shutdown via `page.quit()` attempts to remove it. Abnormal termination or locked files may leave the directory behind. This provides a useful comparison with native private browsing but does not guarantee site access
 - Full example: see the `examples/` directory
 
 ### Enable XPath Picker
@@ -2113,11 +2114,11 @@ This is also the design source for many high-level APIs in this project, such as
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=LoseNine%2Fruyipage&type=timeline&legend=top-left">
+<a href="https://www.star-history.com/?repos=charlesval%2FruyiPage&type=timeline&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=LoseNine/ruyipage&type=timeline&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=LoseNine/ruyipage&type=timeline&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=LoseNine/ruyipage&type=timeline&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=charlesval/ruyiPage&type=timeline&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=charlesval/ruyiPage&type=timeline&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=charlesval/ruyiPage&type=timeline&legend=top-left" />
  </picture>
 </a>
 
