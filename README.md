@@ -26,54 +26,6 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/ruyiPage)](https://pypi.org/project/ruyiPage/)
 [![Downloads](https://static.pepy.tech/badge/ruyipage)](https://pepy.tech/project/ruyipage)
 
-## ❤️ 赞助商
-
-> [想出现在这里？](mailto:losenine@163.com)
-
-<table>
-
-<tr>
-<td width="180"><a href="http://www.fastaitoken.com/register"><img src="images/fastaitoken.jpg" alt="FastAIToken" width="150"></a></td>
-<td>🎉 感谢 FastAIToken 对本项目的赞助！<a href="http://www.fastaitoken.com/register">FastAIToken</a> 是面向开发者的 AI API 聚合平台，支持 OpenAI、Claude、Gemini 等主流大模型，充值 1:1，1 元 = 1 美元 API 额度，让开发者以更低成本、更便捷地使用全球领先的大模型服务，国产模型 deepseek、glm、kimi 统一满血官 key 低价。<br>
-
-🚀 平台提供多种渠道自由选择：超级低价的 0.06x OpenAI 福利分组（限时）、低至 0.2x OpenAI 分组、0.7x Claude 95% 固定缓存、1.5x Claude Max 渠道；同时提供公开状态页，实时展示各分组的可用率、延迟及运行状态，服务透明可靠，并提供 7×24 小时真人技术支持（非机器人），快速响应开发者需求。<br>
-
-🦊 包含 GPT 全系列，以及 Claude Opus 的 Kiro 和 Max 渠道，包纯度，实用耐蹬，自用：<a href="http://www.fastaitoken.com/register">http://www.fastaitoken.com/register</a>
-</td>
-</tr>
-
-</table>
-
-## 实战展示
-
-下面这些图放的是实际场景展示。为了在 GitHub 首页里更紧凑，我这里用两列表格展示。
-
-<table>
-  <tr>
-    <td align="center"><b>可直接通过 Cloudflare 5s 盾</b><br><img src="images/cloudfare.jpg" width="320" alt="Cloudflare 5s challenge" /></td>
-    <td align="center"><b>可直接通过 hCaptcha</b><br><img src="images/hcapture.jpg" width="320" alt="hCaptcha" /></td>
-  </tr>
-  <tr>
-    <td align="center"><b>可直接通过 DataDome</b><br><img src="images/datadome.jpg" width="320" alt="DataDome" /></td>
-    <td align="center"><b>可直接进入 Outlook Mail</b><br><img src="images/outlook.jpg" width="320" alt="Outlook Mail" /></td>
-  </tr>
-  <tr>
-    <td align="center"><b>可直接进入 Google Mail</b><br><img src="images/google.jpg" width="320" alt="Google Mail" /></td>
-    <td align="center"><b>bet365 实战展示</b><br><img src="images/bet365.png" width="320" alt="bet365 Demo" /></td>
-  </tr>
-  <tr>
-    <td align="center"><b>reCAPTCHA 评分 0.9 展示</b><br><img src="images/recaptcha.png" width="320" alt="reCAPTCHA score 0.9" /></td>
-    <td align="center"><b>指纹浏览器指纹页展示</b><br><img src="images/fingerprint.png" width="320" alt="Fingerprint Browser Demo" /></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Firefox 路线真实场景能力</b><br>更适合高风控页面、登录流、验证码与真实交互场景</td>
-    <td></td>
-  </tr>
-</table>
-
-> 这些展示图用于说明 `ruyiPage` 在 Firefox 路线下的真实场景能力。
-> 如果目标站点风控更强，仍建议优先配合本项目推荐的 Firefox 内核方案，或任意可用的火狐指纹浏览器使用。
-
 ---
 
 ## 内核两项底层能力：指纹与追踪
