@@ -24,8 +24,6 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/ruyiPage.svg)](https://pypi.org/project/ruyiPage/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/ruyiPage)](https://pypi.org/project/ruyiPage/)
-[![Last Commit](https://img.shields.io/github/last-commit/smith-e09046/ruyiPage)](https://github.com/smith-e09046/ruyiPage/commits/main)
-[![GitHub stars](https://img.shields.io/github/stars/smith-e09046/ruyiPage?style=social)](https://github.com/smith-e09046/ruyiPage/stargazers)
 [![Downloads](https://static.pepy.tech/badge/ruyipage)](https://pepy.tech/project/ruyipage)
 
 ## ❤️ 赞助商
