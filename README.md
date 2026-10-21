@@ -24,8 +24,8 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/ruyiPage.svg)](https://pypi.org/project/ruyiPage/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/ruyiPage)](https://pypi.org/project/ruyiPage/)
-[![Last Commit](https://img.shields.io/github/last-commit/losenine9-coder/ruyiPage)](https://github.com/losenine9-coder/ruyiPage/commits/main)
-[![GitHub stars](https://img.shields.io/github/stars/losenine9-coder/ruyiPage?style=social)](https://github.com/losenine9-coder/ruyiPage/stargazers)
+[![Last Commit](https://img.shields.io/github/last-commit/smith-e09046/ruyiPage)](https://github.com/smith-e09046/ruyiPage/commits/main)
+[![GitHub stars](https://img.shields.io/github/stars/smith-e09046/ruyiPage?style=social)](https://github.com/smith-e09046/ruyiPage/stargazers)
 [![Downloads](https://static.pepy.tech/badge/ruyipage)](https://pepy.tech/project/ruyipage)
 
 ## ❤️ 赞助商
@@ -2222,11 +2222,11 @@ WebRTC/媒体、时区/语言、反 Hook 十类检测点，外加网络代理与
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=losenine9-coder%2FruyiPage&type=timeline&legend=top-left">
+<a href="https://www.star-history.com/?repos=smith-e09046%2FruyiPage&type=timeline&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=losenine9-coder/ruyiPage&type=timeline&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=losenine9-coder/ruyiPage&type=timeline&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=losenine9-coder/ruyiPage&type=timeline&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=smith-e09046/ruyiPage&type=timeline&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=smith-e09046/ruyiPage&type=timeline&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=smith-e09046/ruyiPage&type=timeline&legend=top-left" />
  </picture>
 </a>
 

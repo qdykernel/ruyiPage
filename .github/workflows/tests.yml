@@ -33,24 +33,25 @@ jobs:
       - name: Run fast tests
         run: python -m pytest -m fast -q
 
-      - name: Install managed Firefox 155
+      - name: Install managed Firefox
         shell: powershell
         run: |
           $installRoot = Join-Path $env:RUNNER_TEMP "ruyipage-browsers"
+          $expectedJson = python -c "import json; from ruyipage._runtime.manifest import RUNTIMES; print(json.dumps(RUNTIMES['win64']))"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to read the managed Firefox manifest"
+          }
+          $expected = $expectedJson | ConvertFrom-Json
           $installJson = python -m ruyipage install --install-dir "$installRoot" --json
           if ($LASTEXITCODE -ne 0) {
             throw "Managed Firefox install failed with exit code $LASTEXITCODE"
           }
 
           $runtime = $installJson | ConvertFrom-Json
-          if ($runtime.version -ne "155.0") {
-            throw "Expected Firefox 155.0, got $($runtime.version)"
-          }
-          if ($runtime.release -ne "v1.2.69") {
-            throw "Expected runtime release v1.2.69, got $($runtime.release)"
-          }
-          if ($runtime.asset -ne "firefox-155.0.en-US.win64-20260907.zip") {
-            throw "Unexpected Firefox asset: $($runtime.asset)"
+          foreach ($field in @("version", "release", "asset")) {
+            if ($runtime.$field -ne $expected.$field) {
+              throw "Expected runtime $field '$($expected.$field)', got '$($runtime.$field)'"
+            }
           }
           if (-not (Test-Path -LiteralPath $runtime.executable_path -PathType Leaf)) {
             throw "Managed Firefox executable not found: $($runtime.executable_path)"

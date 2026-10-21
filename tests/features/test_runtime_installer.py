@@ -47,17 +47,17 @@ def _make_tar_xz(path, entries, symlink=None):
     [
         (
             "win64",
-            "v1.2.76",
+            "v1.2.77",
             "158.0",
             "firefox-158.0.en-US.win64-20261017.zip",
-            "firefox-158.0-v1.2.76-win64",
+            "firefox-158.0-v1.2.77-win64",
         ),
         (
             "linux-x86_64",
-            "v1.2.76",
+            "v1.2.77",
             "158.0",
             "firefox-158.0.en-US.linux-x86_64-20261017.tar.xz",
-            "firefox-158.0-v1.2.76-linux-x86_64",
+            "firefox-158.0-v1.2.77-linux-x86_64",
         ),
     ],
 )
@@ -70,14 +70,14 @@ def test_runtime_manifest_targets_latest_ruyipage_release(
 ):
     info = RUNTIMES[platform_key]
 
-    assert RELEASE_TAG == "v1.2.76"
+    assert RELEASE_TAG == "v1.2.77"
     assert FIREFOX_VERSION == "158.0"
     assert info["release"] == release
     assert info["version"] == version
     assert info["asset"] == asset
     assert info["install_subdir"] == install_subdir
     assert runtime_url(info) == (
-        "https://github.com/losenine9-coder/ruyiPage/releases/download/"
+        "https://github.com/smith-e09046/ruyiPage/releases/download/"
         "{}/{}".format(release, asset)
     )
 
@@ -86,7 +86,7 @@ def test_runtime_url_follows_each_platform_release():
     """平台构建进度不同步时，URL 必须跟随该平台自己的 release tag。"""
     lagging = dict(RUNTIMES["linux-x86_64"], release="v1.2.58")
 
-    assert "/download/v1.2.76/" in runtime_url(RUNTIMES["win64"])
+    assert "/download/v1.2.77/" in runtime_url(RUNTIMES["win64"])
     assert "/download/v1.2.58/" in runtime_url(lagging)
 
 
