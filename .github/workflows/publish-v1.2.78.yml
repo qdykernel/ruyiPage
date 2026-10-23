@@ -1,0 +1,74 @@
+name: Publish ruyiPage v1.2.78 release
+
+on:
+  push:
+    branches:
+      - sync-release-v1.2.78
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/sync-release-v1.2.78'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Download release assets from Gitee
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          base="https://gitee.com/losenine888/ruyiPage/releases/download/v1.2.78"
+          assets=(
+            "firefox-158.0.en-US.linux-x86_64-20261017.tar.xz"
+            "firefox-158.0.en-US.win64-20261017.tar.xz"
+            "firefox-158.0.en-US.win64-20261017.installer.exe"
+            "ruyipage-1.2.78-py3-none-any.whl"
+            "ruyipage-1.2.78.tar.gz"
+            "SHA256SUMS"
+            "v1.2.78.zip"
+            "v1.2.78.tar.gz"
+          )
+          for asset in "${assets[@]}"; do
+            curl --fail --location --retry 5 --retry-all-errors --silent --show-error \
+              --output "dist/${asset}" "${base}/${asset}"
+          done
+
+      - name: Verify SHA256SUMS
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd dist && sha256sum --check SHA256SUMS)
+
+      - name: Write release notes
+        shell: bash
+        run: |
+          cat > release-notes.md <<'EOF'
+ruyiPage 1.2.78 moves managed Firefox downloads and package project URLs to Gitee.
+
+\`\`\`bash
+pip install -U ruyiPage==1.2.78
+python -m ruyipage install
+\`\`\`
+
+Firefox 158.0 runtimes are provided for Windows x64 and Linux x86_64. The Windows runtime uses tar.xz compression to fit Gitee attachment limits; the built-in installer extracts it automatically. A Windows installer and SHA256SUMS are also included.
+
+Tests and CI were skipped at the maintainer's request.
+EOF
+
+      - name: Create GitHub release and upload assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v1.2.78 --repo "${GH_REPO}" >/dev/null 2>&1; then
+            gh release upload v1.2.78 --repo "${GH_REPO}" --clobber dist/*
+          else
+            gh release create v1.2.78 --repo "${GH_REPO}" --verify-tag \
+              --title "ruyiPage 1.2.78 / Firefox 158.0" \
+              --notes-file release-notes.md \
+              dist/*
+          fi
